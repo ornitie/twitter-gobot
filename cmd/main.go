@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/ornitie/twitter-gobot/pkg"
@@ -24,14 +23,13 @@ func main() {
 	if defined {
 		fmt.Println(value)
 	}
-	pokeresponse := &PokeResponse{}
-	resp, err := resources.Get("https://pokeapi.co/api/v2/ability/?limit=20&offset=20")
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		err := json.NewDecoder(resp.Body).Decode(pokeresponse)
-		if err == nil {
-			fmt.Println(pokeresponse.Count)
-		}
+	response, error := resources.Get("https://pokeapi.co/api/v2/ability/?limit=20&offset=20")
+	if error != nil {
+		fmt.Println("Error Calling resource")
+		return
 	}
+
+	pokeresponse := &PokeResponse{}
+	_ = resources.ToStruct(*response, pokeresponse)
+	fmt.Println(pokeresponse.Count)
 }

@@ -10,6 +10,9 @@ import (
 type (
 	PokeResponse struct {
 		Count int64 `json:"count" bson:"count"`
+		Data  struct {
+			Username string `json:"username" bson:"username"`
+		} `json:"data" bson:"data"`
 	}
 )
 
@@ -23,13 +26,17 @@ func main() {
 	if defined {
 		fmt.Println(value)
 	}
-	response, error := resources.Get("https://pokeapi.co/api/v2/ability/?limit=20&offset=20")
-	if error != nil {
-		fmt.Println("Error Calling resource")
-		return
-	}
+	bearer, defined := os.LookupEnv("BEARER_TOKEN")
+	if defined {
+		baseResource := resources.NewBaseResource(bearer)
+		response, error := baseResource.Get("https://api.twitter.com/2/users/by/username/negromano")
+		if error != nil {
+			fmt.Println("Error Calling resource")
+			return
+		}
 
-	pokeresponse := &PokeResponse{}
-	_ = resources.ToStruct(*response, pokeresponse)
-	fmt.Println(pokeresponse.Count)
+		pokeresponse := &PokeResponse{}
+		_ = resources.ToStruct(*response, pokeresponse)
+		fmt.Println(pokeresponse.Data.Username)
+	}
 }

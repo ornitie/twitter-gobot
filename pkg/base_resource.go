@@ -3,6 +3,8 @@ package resources
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -64,7 +66,8 @@ func (br BaseResource) Post(path string, payload interface{}) (*http.Response, e
 
 	if response.StatusCode > 399 {
 		bodyString := string(bodyBytes)
-		log.Fatalf("Error with the POST request with status %v and  error: %+v", response.StatusCode, bodyString)
+		log.Fatalf("Error with the POST request %v", path)
+		err = fmt.Errorf("Error with the POST request with status %v and  error: %+v", response.StatusCode, bodyString)
 	}
 
 	return response, err

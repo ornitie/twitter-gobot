@@ -10,4 +10,9 @@ type (
 		Value string `json:"value" bson:"value" validate:"required"`
 		Tag   string `json:"tag,omitempty" bson:"tag"`
 	}
+
+	RuleResponse struct {
+		Rules    []Rule            `json:"data" bson:"data" validate:"required"`
+		Metadata map[string]string `json:"meta,omitempty" bson:"meta"`
+	}
 )

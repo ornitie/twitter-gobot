@@ -2,12 +2,15 @@ package server
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/ornitie/twitter-gobot/cmd/controllers"
+	"github.com/ornitie/twitter-gobot/pkg/resources"
 	"log"
 	"net/http"
 )
 
 type api struct {
-	router http.Handler
+	router          http.Handler
+	rulesController *controllers.RulesController
 }
 
 type Server interface {
@@ -15,8 +18,12 @@ type Server interface {
 	SetRouter(*mux.Router)
 }
 
-func NewServer() (Server, error) {
-	api := &api{}
+func NewServer(bearer string) (Server, error) {
+	baseResource := resources.NewBaseResource(bearer)
+
+	api := &api{
+		rulesController: controllers.NewRulesController(baseResource),
+	}
 
 	error := mapRoutes(api)
 

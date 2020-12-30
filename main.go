@@ -6,18 +6,28 @@ import (
 	// "github.com/joho/godotenv"
 	// "github.com/ornitie/twitter-gobot/internal/models"
 	"github.com/ornitie/twitter-gobot/cmd/server"
+	"log"
 	"net/http"
-	// "os"
+	"os"
 )
 
 func main() {
-	s, error := server.NewServer()
+	bearer, defined := os.LookupEnv("BEARER_TOKEN")
+	if defined {
+		s, error := server.NewServer(bearer)
 
-	if error != nil {
-		return
+		if error != nil {
+			return
+		}
+
+		error = http.ListenAndServe(":8080", s.Router())
+
+		if error != nil {
+			log.Fatalf("Error creating the server %v", error)
+		}
 	}
 
-	http.ListenAndServe(":8080", s.Router())
+	log.Fatalf("Error failed missing env var")
 	// fmt.Println("hello world, This is my own twitter-gobot")
 	// err := godotenv.Load()
 	// value, defined := os.LookupEnv("SOMETHING_ELSE")
@@ -28,10 +38,6 @@ func main() {
 	// 	fmt.Println(value)
 	// }
 	// createRule := models.CreateRule{Add: []models.Rule{models.Rule{Value: "from:shoe0nhead"}}}
-	// fmt.Printf("GOT ONE %+v", createRule)
-	// bearer, defined := os.LookupEnv("BEARER_TOKEN")
-	// if defined {
-	// 	baseResource := resources.NewBaseResource(bearer)
 	// 	post_response, _ := baseResource.Post("https://api.twitter.com/2/tweets/search/stream/rules", createRule)
 	// 	fmt.Printf("GOT ONE %+v", post_response)
 	// response, _ := baseResource.Get("https://api.twitter.com/2/tweets/search/stream")

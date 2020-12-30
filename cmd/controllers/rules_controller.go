@@ -1,20 +1,25 @@
 package controllers
 
 import (
-	"github.com/ornitie/twitter-gobot/cmd/services",
+	"github.com/ornitie/twitter-gobot/internal/models"
+	"github.com/ornitie/twitter-gobot/internal/services"
 	"github.com/ornitie/twitter-gobot/pkg/resources"
 )
 
 type (
 	RulesController struct {
-		services.RulesService
+		service services.RulesService
 	}
 )
 
-func NewRulesController(baseResource resources.BaseResource) *RulesController {
+func NewRulesController(baseResource *resources.BaseResource) *RulesController {
 	return &RulesController{
-		RulesController: services.RulesService{
-			SettingsService: services.NewRulesService(baseResource),
-		},
+		service: *services.NewRulesService(baseResource),
 	}
+}
+
+func (controller *RulesController) GetRules() *models.RuleResponse {
+	rules, _ := controller.service.GetRules()
+
+	return rules
 }

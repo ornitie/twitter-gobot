@@ -1,6 +1,10 @@
 package models
 
 type (
+	RemoveRule struct {
+		IDS []string `json:"ids,omitempty" bson:"ids"`
+	}
+
 	CreateRule struct {
 		Add []Rule `json:"add" bson:"add" validate:"required"`
 	}

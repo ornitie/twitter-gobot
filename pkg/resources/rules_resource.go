@@ -58,5 +58,9 @@ func (resource *RulesResource) CreateRule(rule *models.CreateRule) error {
 		return error
 	}
 
-	return nil
+	if rulesResponse.Errors != nil {
+		error = NewResponseError(rulesResponse.Errors[0]["title"])
+	}
+
+	return error
 }

@@ -3,6 +3,7 @@ package resources
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/ornitie/twitter-gobot/pkg/models"
 	"log"
 	"net/http"
 )
@@ -58,4 +59,8 @@ func ToStruct(response http.Response, target interface{}) error {
 	defer response.Body.Close()
 
 	return json.NewDecoder(response.Body).Decode(&target)
+}
+
+func NewResponseError(message string) models.ResourceError {
+	return models.ResourceError{Message: message}
 }

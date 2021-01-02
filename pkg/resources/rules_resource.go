@@ -2,6 +2,7 @@ package resources
 
 import (
 	"github.com/ornitie/twitter-gobot/internal/models"
+	"log"
 )
 
 type RulesResource struct {
@@ -37,6 +38,25 @@ func (resource *RulesResource) DeleteRule(ID string) error {
 	rulesResponse := &models.RuleResponse{}
 
 	_ = ToStruct(*response, rulesResponse)
+
+	return nil
+}
+
+func (resource *RulesResource) CreateRule(rule *models.CreateRule) error {
+	response, error := resource.baseResource.Post(BASE_URL+RULES_URI, rule)
+	rulesResponse := &models.CreateResponse{}
+
+	if error != nil {
+		log.Printf("Error with the response %v", error)
+		return error
+	}
+
+	error = ToStruct(*response, rulesResponse)
+
+	if error != nil {
+		log.Printf("Error while parsing %v", error)
+		return error
+	}
 
 	return nil
 }

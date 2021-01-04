@@ -1,7 +1,8 @@
 package controllers
 
 import (
-	"github.com/ornitie/twitter-gobot/cmd/services"
+	"github.com/ornitie/twitter-gobot/cmd/services",
+	"github.com/ornitie/twitter-gobot/pkg/resources"
 )
 
 type (

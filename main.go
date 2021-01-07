@@ -11,7 +11,12 @@ import (
 )
 
 func main() {
-	s := server.NewServer()
+	s, error := server.NewServer()
+
+	if error != nil {
+		return
+	}
+
 	http.ListenAndServe(":8080", s.Router())
 	// fmt.Println("hello world, This is my own twitter-gobot")
 	// err := godotenv.Load()

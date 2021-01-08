@@ -17,10 +17,12 @@ func mapRoutes(a *api) error {
 }
 
 func (api *api) getRules(writer http.ResponseWriter, request *http.Request) {
-	gophers := map[string]string{
-		"response": "nope, chuck testa in the routes",
-	}
+	// gophers := map[string]string{
+	// 	"response": "nope, chuck testa in the routes",
+	// }
+
+	gophers := api.rulesController.GetRules()
 
 	writer.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(writer).Encode(gophers)
+	_ = json.NewEncoder(writer).Encode(gophers)
 }

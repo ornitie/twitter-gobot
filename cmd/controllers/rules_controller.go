@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"github.com/ornitie/twitter-gobot/internal/models"
 	"github.com/ornitie/twitter-gobot/internal/services"
 	"github.com/ornitie/twitter-gobot/pkg/resources"
+	"net/http"
 )
 
 type (
@@ -18,7 +18,7 @@ func NewRulesController(baseResource *resources.BaseResource) *RulesController {
 	}
 }
 
-func (controller *RulesController) GetRules() *models.RuleResponse {
+func (controller *RulesController) GetRules(request *http.Request) interface{} {
 	rules, _ := controller.service.GetRules()
 
 	return rules

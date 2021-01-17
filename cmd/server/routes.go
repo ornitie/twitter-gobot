@@ -6,23 +6,23 @@ import (
 	"net/http"
 )
 
-func mapRoutes(a *api) error {
+type handler func(*http.Request) interface{}
+
+func mapRoutes(api *api) error {
 	router := mux.NewRouter()
 
-	a.SetRouter(router)
+	api.SetRouter(router)
 
-	router.HandleFunc("/rules", a.getRules).Methods(http.MethodGet)
+	router.HandleFunc("/rules", api.genericRouter(api.rulesController.GetRules)).Methods(http.MethodGet)
 
 	return nil
 }
 
-func (api *api) getRules(writer http.ResponseWriter, request *http.Request) {
-	// gophers := map[string]string{
-	// 	"response": "nope, chuck testa in the routes",
-	// }
+func (api *api) genericRouter(function handler) func(w http.ResponseWriter, r *http.Request) {
+	return func(writer http.ResponseWriter, reader *http.Request) {
+		rules := function(reader)
 
-	gophers := api.rulesController.GetRules()
-
-	writer.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(writer).Encode(gophers)
+		writer.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(writer).Encode(rules)
+	}
 }

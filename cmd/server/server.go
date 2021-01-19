@@ -36,6 +36,8 @@ func NewServer(bearer string) (Server, error) {
 }
 
 func (api *api) Router() http.Handler {
+	log.Print("Server up and running")
+
 	return api.router
 }
 

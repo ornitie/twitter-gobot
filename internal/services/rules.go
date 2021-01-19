@@ -12,27 +12,30 @@ const (
 
 type (
 	RulesService struct {
-		baseResource *resources.BaseResource
+		rulesResource *resources.RulesResource
 	}
 )
 
 func NewRulesService(baseResource *resources.BaseResource) *RulesService {
-	return &RulesService{baseResource: baseResource}
+	return &RulesService{rulesResource: resources.NewRulesResource(baseResource)}
 }
 
-func (service RulesService) CreateNewRule(ruleValue string) error {
-	createRule := models.CreateRule{Add: []models.Rule{models.Rule{Value: ruleValue}}}
+// func (service RulesService) CreateNewRule(ruleValue string) error {
+// 	createRule := models.CreateRule{Add: []models.Rule{models.Rule{Value: ruleValue}}}
 
-	_, err := service.baseResource.Post(BASE_URL+STREAM_URI+"rules", createRule)
+// 	_, err := service.baseResource.Post(BASE_URL+STREAM_URI+"rules", createRule)
 
-	return err
-}
+// 	return err
+// }
 
 func (service RulesService) GetRules() (*models.RuleResponse, error) {
-	response, _ := service.baseResource.Get("https://api.twitter.com/2/tweets/search/stream/rules")
-	rulesResponse := &models.RuleResponse{}
+	response, error := service.rulesResource.GetRules()
 
-	_ = resources.ToStruct(*response, rulesResponse)
+	return response, error
+}
 
-	return rulesResponse, nil
+func (service RulesService) DeleteRule(ruleId string) error {
+	error := service.rulesResource.DeleteRule(ruleId)
+
+	return error
 }

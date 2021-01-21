@@ -39,3 +39,9 @@ func (service RulesService) DeleteRule(ruleId string) error {
 
 	return error
 }
+
+func (service RulesService) CreateRule(createRule *models.CreateRule) error {
+	error := service.rulesResource.CreateRule(createRule)
+
+	return error
+}

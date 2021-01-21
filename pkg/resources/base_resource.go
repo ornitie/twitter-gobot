@@ -3,8 +3,6 @@ package resources
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -35,7 +33,7 @@ func (br BaseResource) Get(path string) (*http.Response, error) {
 	response, err := br.client.Do(req)
 
 	if err != nil {
-		log.Fatalf("Error maiking the request %v", err)
+		log.Fatalf("Error making the request %v", err)
 	}
 
 	return response, err
@@ -52,23 +50,6 @@ func (br BaseResource) Post(path string, payload interface{}) (*http.Response, e
 	req.Header.Add("Content-Type", "application/json")
 
 	response, err := br.client.Do(req)
-
-	if err != nil {
-		log.Fatalf("Error making the request %v", err)
-	}
-
-	bodyBytes, err := ioutil.ReadAll(response.Body)
-
-	if err != nil {
-		log.Fatalf("Error parsing the request %v", err)
-	}
-
-	if response.StatusCode > 399 {
-		bodyString := string(bodyBytes)
-		err = fmt.Errorf("Error with the POST request with status %v and  error: %+v", response.StatusCode, bodyString)
-
-		return response, err
-	}
 
 	return response, err
 }

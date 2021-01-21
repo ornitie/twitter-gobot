@@ -15,6 +15,7 @@ func mapRoutes(api *api) error {
 	api.SetRouter(router)
 
 	router.HandleFunc("/rules", api.genericRouter(api.rulesController.GetRules)).Methods(http.MethodGet)
+	router.HandleFunc("/rules", api.genericRouter(api.rulesController.CreateRule)).Methods(http.MethodPost)
 	router.HandleFunc("/rules/{ID:[a-zA-Z0-9_]+}", api.genericRouter(api.rulesController.DeleteRule)).Methods(http.MethodDelete)
 
 	return nil

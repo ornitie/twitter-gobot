@@ -59,7 +59,7 @@ func (controller *RulesController) CreateRule(request *http.Request) interface{}
 	}
 
 	if error != nil {
-		response["status"] = "Error removing Rule"
+		response["status"] = "Error creating new Rule"
 		response["error"] = error.Error()
 	}
 

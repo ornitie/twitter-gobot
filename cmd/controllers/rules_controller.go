@@ -21,13 +21,13 @@ func NewRulesController(baseResource *resources.BaseResource) *RulesController {
 	}
 }
 
-func (controller *RulesController) GetRules(request *http.Request) interface{} {
-	rules, _ := controller.service.GetRules()
+func (controller *RulesController) GetRules(request *http.Request) (interface{}, error) {
+	rules, error := controller.service.GetRules()
 
-	return rules
+	return rules, error
 }
 
-func (controller *RulesController) DeleteRule(request *http.Request) interface{} {
+func (controller *RulesController) DeleteRule(request *http.Request) (interface{}, error) {
 	ruleId := mux.Vars(request)["ID"]
 	error := controller.service.DeleteRule(ruleId)
 
@@ -40,10 +40,10 @@ func (controller *RulesController) DeleteRule(request *http.Request) interface{}
 		response["error"] = error.Error()
 	}
 
-	return response
+	return response, error
 }
 
-func (controller *RulesController) CreateRule(request *http.Request) interface{} {
+func (controller *RulesController) CreateRule(request *http.Request) (interface{}, error) {
 	var createRule models.CreateRule
 
 	_ = json.NewDecoder(request.Body).Decode(&createRule)
@@ -63,5 +63,5 @@ func (controller *RulesController) CreateRule(request *http.Request) interface{}
 		response["error"] = error.Error()
 	}
 
-	return response
+	return response, error
 }

@@ -5,16 +5,21 @@ import (
 	// "fmt"
 	// "github.com/joho/godotenv"
 	// "github.com/ornitie/twitter-gobot/internal/models"
-	"github.com/ornitie/twitter-gobot/cmd/server"
+
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/ornitie/twitter-gobot/cmd/server"
 )
 
 func main() {
-	bearer, defined := os.LookupEnv("BEARER_TOKEN")
+	envs, defined := loadEnvs()
 	if defined {
-		s, error := server.NewServer(bearer)
+
+		s, error := server.NewServer(envs)
 
 		if error != nil {
 			return
@@ -26,6 +31,8 @@ func main() {
 			log.Fatalf("Error creating the server %v", error)
 		}
 	}
+
+	fmt.Println("Successfully connected!")
 
 	log.Fatalf("Error failed missing env var")
 	// fmt.Println("hello world, This is my own twitter-gobot")
@@ -61,4 +68,33 @@ func main() {
 	// _ = resources.ToStruct(*response, pokeresponse)
 	// fmt.Println(pokeresponse.Data.Username)
 	// }
+}
+
+func loadEnvs() (map[string]string, bool) {
+	_ = godotenv.Load()
+
+	envs := map[string]string{}
+
+	var defined bool
+
+	if envs["bearer"], defined = os.LookupEnv("BEARER_TOKEN"); !defined {
+		return envs, false
+	}
+	if envs["dbHost"], defined = os.LookupEnv("DATABASE_HOST"); !defined {
+		return envs, false
+	}
+	if envs["dbPort"], defined = os.LookupEnv("DATABASE_PORT"); !defined {
+		return envs, false
+	}
+	if envs["dbUser"], defined = os.LookupEnv("DATABASE_USER"); !defined {
+		return envs, false
+	}
+	if envs["dbPassword"], defined = os.LookupEnv("DATABASE_PASSWORD"); !defined {
+		return envs, false
+	}
+	if envs["dbName"], defined = os.LookupEnv("DATABASE_NAME"); !defined {
+		return envs, false
+	}
+
+	return envs, true
 }

@@ -1,11 +1,15 @@
 package server
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/ornitie/twitter-gobot/cmd/controllers"
-	"github.com/ornitie/twitter-gobot/pkg/resources"
+	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
+	"github.com/ornitie/twitter-gobot/cmd/controllers"
+	"github.com/ornitie/twitter-gobot/pkg/resources"
 )
 
 type api struct {
@@ -19,8 +23,20 @@ type Server interface {
 	SetRouter(*mux.Router)
 }
 
-func NewServer(bearer string) (Server, error) {
-	baseResource := resources.NewBaseResource(bearer)
+func NewServer(envs map[string]string) (Server, error) {
+	baseResource := resources.NewBaseResource(envs["bearer"])
+	db := initializeDatabase(envs)
+	defer db.Close()
+	sqlStatement := "SELECT name from groups"
+	row := db.QueryRow(sqlStatement)
+	var title string
+	_ = row.Scan(&title)
+	log.Printf("%s", title)
+
+	err := db.Ping()
+	if err != nil {
+		panic(err)
+	}
 
 	api := &api{
 		rulesController:  controllers.NewRulesController(baseResource),
@@ -45,4 +61,21 @@ func (api *api) Router() http.Handler {
 
 func (api *api) SetRouter(r *mux.Router) {
 	api.router = r
+}
+
+func initializeDatabase(envs map[string]string) *sql.DB {
+	databaseInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		envs["dbHost"],
+		envs["dbPort"],
+		envs["dbUser"],
+		envs["dbPassword"],
+		envs["dbName"])
+
+	db, err := sql.Open("postgres", databaseInfo)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return db
 }

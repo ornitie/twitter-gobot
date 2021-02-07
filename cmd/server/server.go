@@ -9,8 +9,9 @@ import (
 )
 
 type api struct {
-	router          http.Handler
-	rulesController *controllers.RulesController
+	router           http.Handler
+	rulesController  *controllers.RulesController
+	tweetsController *controllers.TweetsController
 }
 
 type Server interface {
@@ -22,7 +23,8 @@ func NewServer(bearer string) (Server, error) {
 	baseResource := resources.NewBaseResource(bearer)
 
 	api := &api{
-		rulesController: controllers.NewRulesController(baseResource),
+		rulesController:  controllers.NewRulesController(baseResource),
+		tweetsController: controllers.NewTweetsController(baseResource),
 	}
 
 	error := mapRoutes(api)

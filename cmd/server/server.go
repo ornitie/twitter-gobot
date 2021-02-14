@@ -9,6 +9,8 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/ornitie/twitter-gobot/cmd/controllers"
 	"github.com/ornitie/twitter-gobot/pkg/resources"
+
+	"github.com/ornitie/twitter-gobot/internal/repositories"
 )
 
 type api struct {
@@ -25,10 +27,11 @@ type Server interface {
 
 func NewServer(envs map[string]string, db *sql.DB) (Server, error) {
 	baseResource := resources.NewBaseResource(envs["bearer"])
+	baseRepository := repositories.NewBaseRepository(db)
 
 	api := &api{
 		rulesController:  controllers.NewRulesController(baseResource),
-		tweetsController: controllers.NewTweetsController(baseResource),
+		tweetsController: controllers.NewTweetsController(baseResource, baseRepository),
 	}
 
 	error := mapRoutes(api)

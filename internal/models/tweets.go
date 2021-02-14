@@ -6,7 +6,8 @@ type (
 	}
 
 	Tweet struct {
-		ID   string `json:"id" bson:"id"`
-		Text string `json:"text" bson:"text"`
+		ID     string `json:"id" bson:"id"`
+		Text   string `json:"text" bson:"text"`
+		Author string `json:"author_id" bson:"author_id"`
 	}
 )

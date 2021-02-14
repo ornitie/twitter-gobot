@@ -1,6 +1,7 @@
 package server
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 
@@ -22,7 +23,7 @@ type Server interface {
 	StreamTweets()
 }
 
-func NewServer(envs map[string]string) (Server, error) {
+func NewServer(envs map[string]string, db *sql.DB) (Server, error) {
 	baseResource := resources.NewBaseResource(envs["bearer"])
 
 	api := &api{

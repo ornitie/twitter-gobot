@@ -16,3 +16,7 @@ func NewTweetsController(baseResource *resources.BaseResource) *TweetsController
 		service: *services.NewTweetsService(baseResource),
 	}
 }
+
+func (controller TweetsController) StreamTweets() {
+	controller.service.StreamTweets()
+}

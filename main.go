@@ -1,11 +1,7 @@
 package main
 
 import (
-	// "bufio"
-	// "fmt"
-	// "github.com/joho/godotenv"
-	// "github.com/ornitie/twitter-gobot/internal/models"
-
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,13 +13,26 @@ import (
 
 func main() {
 	envs, defined := loadEnvs()
+
 	if defined {
+
+		db := initializeDatabase(envs)
+		defer db.Close()
+
+		err := db.Ping()
+		if err != nil {
+			panic(err)
+		}
 
 		s, error := server.NewServer(envs)
 
 		if error != nil {
 			return
 		}
+
+		go func() {
+			s.StreamTweets()
+		}()
 
 		error = http.ListenAndServe(":8080", s.Router())
 
@@ -32,42 +41,7 @@ func main() {
 		}
 	}
 
-	fmt.Println("Successfully connected!")
-
 	log.Fatalf("Error failed missing env var")
-	// fmt.Println("hello world, This is my own twitter-gobot")
-	// err := godotenv.Load()
-	// value, defined := os.LookupEnv("SOMETHING_ELSE")
-	// if err != nil {
-	// 	fmt.Println("Error loading .env file")
-	// }
-	// if defined {
-	// 	fmt.Println(value)
-	// }
-	// createRule := models.CreateRule{Add: []models.Rule{models.Rule{Value: "from:shoe0nhead"}}}
-	// 	post_response, _ := baseResource.Post("https://api.twitter.com/2/tweets/search/stream/rules", createRule)
-	// 	fmt.Printf("GOT ONE %+v", post_response)
-	// response, _ := baseResource.Get("https://api.twitter.com/2/tweets/search/stream")
-	// fmt.Println("Response: Content-length:", response.Header.Get("Content-length"))
-
-	// reader := bufio.NewReader(response.Body)
-	// for {
-	// 	// fmt.Printf("YEA %v", response.Body)
-	// 	line, err := reader.ReadBytes('\n')
-	// 	if err != nil {
-	// 		fmt.Print("FUCK")
-	// 	}
-	// 	fmt.Printf("GOT ONE %v", string(line))
-	// }
-	// if err != nil {
-	// 	fmt.Println("Error Calling resource")
-	// 	return
-	// }
-
-	// pokeresponse := &PokeResponse{}
-	// _ = resources.ToStruct(*response, pokeresponse)
-	// fmt.Println(pokeresponse.Data.Username)
-	// }
 }
 
 func loadEnvs() (map[string]string, bool) {
@@ -97,4 +71,21 @@ func loadEnvs() (map[string]string, bool) {
 	}
 
 	return envs, true
+}
+
+func initializeDatabase(envs map[string]string) *sql.DB {
+	databaseInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		envs["dbHost"],
+		envs["dbPort"],
+		envs["dbUser"],
+		envs["dbPassword"],
+		envs["dbName"])
+
+	db, err := sql.Open("postgres", databaseInfo)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return db
 }

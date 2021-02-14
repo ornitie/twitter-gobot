@@ -1,8 +1,6 @@
 package server
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -21,22 +19,11 @@ type api struct {
 type Server interface {
 	Router() http.Handler
 	SetRouter(*mux.Router)
+	StreamTweets()
 }
 
 func NewServer(envs map[string]string) (Server, error) {
 	baseResource := resources.NewBaseResource(envs["bearer"])
-	db := initializeDatabase(envs)
-	defer db.Close()
-	sqlStatement := "SELECT name from groups"
-	row := db.QueryRow(sqlStatement)
-	var title string
-	_ = row.Scan(&title)
-	log.Printf("%s", title)
-
-	err := db.Ping()
-	if err != nil {
-		panic(err)
-	}
 
 	api := &api{
 		rulesController:  controllers.NewRulesController(baseResource),
@@ -63,19 +50,6 @@ func (api *api) SetRouter(r *mux.Router) {
 	api.router = r
 }
 
-func initializeDatabase(envs map[string]string) *sql.DB {
-	databaseInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		envs["dbHost"],
-		envs["dbPort"],
-		envs["dbUser"],
-		envs["dbPassword"],
-		envs["dbName"])
-
-	db, err := sql.Open("postgres", databaseInfo)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return db
+func (api *api) StreamTweets() {
+	api.tweetsController.StreamTweets()
 }

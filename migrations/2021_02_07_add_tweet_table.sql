@@ -1,6 +1,7 @@
-CREATE TABLE Tweet (
-    ID varchar(255),
-    TweetDate TIMESTAMP,
-    CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    Text text(255)
+CREATE TABLE IF NOT EXISTS Tweet (
+    id SERIAL,
+    tweet_id varchar(255),
+    tweet_date TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    text text
 );

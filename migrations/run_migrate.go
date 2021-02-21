@@ -61,7 +61,13 @@ func runMigrations(db *sql.DB, files []string) {
 			log.Fatalf("Error %v running migration %s", err, filename)
 		}
 
-		_, _ = db.Query("insert into migrations(%1)", filename)
+		query := fmt.Sprintf("insert into migrations(name) values('%s')", filepath.Base(filename))
+
+		_, err = db.Exec(query)
+
+		if err != nil {
+			log.Fatalf("Error %v inserting migration %s", err, filepath.Base(filename))
+		}
 	}
 }
 

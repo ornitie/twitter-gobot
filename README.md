@@ -2,4 +2,4 @@
 Personal attempt at building my first bot using GO
 
 ## Info
-Current Version: 0.1.0
+Current Version: 0.1.1

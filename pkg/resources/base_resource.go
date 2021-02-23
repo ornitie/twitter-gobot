@@ -3,14 +3,16 @@ package resources
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/ornitie/twitter-gobot/pkg/models"
 	"log"
 	"net/http"
+
+	"github.com/ornitie/twitter-gobot/pkg/models"
 )
 
 const (
-	AUTH   = "Authorization"
-	BEARER = "Bearer "
+	AUTH     = "Authorization"
+	BEARER   = "Bearer "
+	BASE_URL = "https://api.twitter.com/2/"
 )
 
 type BaseResource struct {

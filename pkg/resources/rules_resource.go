@@ -1,8 +1,9 @@
 package resources
 
 import (
-	"github.com/ornitie/twitter-gobot/internal/models"
 	"log"
+
+	"github.com/ornitie/twitter-gobot/internal/models"
 )
 
 type RulesResource struct {
@@ -10,7 +11,6 @@ type RulesResource struct {
 }
 
 const (
-	BASE_URL  = "https://api.twitter.com/2/"
 	RULES_URI = "tweets/search/stream/rules"
 )
 
@@ -31,7 +31,7 @@ func (resource *RulesResource) GetRules() (*models.RuleResponse, error) {
 
 func (resource *RulesResource) DeleteRule(ID string) error {
 	response, _ := resource.baseResource.Post(BASE_URL+RULES_URI, map[string]models.RemoveRule{
-		"delete": models.RemoveRule{
+		"delete": {
 			IDS: []string{ID},
 		},
 	})

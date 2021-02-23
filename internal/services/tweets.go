@@ -13,3 +13,7 @@ type (
 func NewTweetsService(baseResource *resources.BaseResource) *TweetsService {
 	return &TweetsService{tweetsResource: resources.NewTweetsResource(baseResource)}
 }
+
+func (service TweetsService) StreamTweets() {
+	service.tweetsResource.StreamTweets()
+}

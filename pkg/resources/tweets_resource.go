@@ -1,11 +1,7 @@
 package resources
 
 import (
-	"bufio"
-	"encoding/json"
-	"fmt"
-
-	"github.com/ornitie/twitter-gobot/internal/models"
+	"net/http"
 )
 
 const (
@@ -23,28 +19,6 @@ func NewTweetsResource(base *BaseResource) *TweetsResource {
 	}
 }
 
-func (resource TweetsResource) StreamTweets() {
-	response, _ := resource.baseResource.Get(BASE_URL + STREAM_URI + AUTHOR_ID)
-	for {
-		responseTweet := &models.TweetResponse{}
-		err := json.NewDecoder(response.Body).Decode(&responseTweet)
-		if err != nil {
-			fmt.Printf("FUCK %v", err)
-			return
-		}
-
-		fmt.Printf("YEP %+v", responseTweet.Tweet)
-	}
-}
-
-func (resource TweetsResource) PrintString() {
-	response, _ := resource.baseResource.Get(BASE_URL + STREAM_URI + AUTHOR_ID)
-	reader := bufio.NewReader(response.Body)
-	for {
-		line, err := reader.ReadBytes('\n')
-		if err != nil {
-			fmt.Print("FUCK")
-		}
-		fmt.Printf("GOT ONE %s", string(line))
-	}
+func (resource TweetsResource) StreamTweets() (*http.Response, error) {
+	return resource.baseResource.Get(BASE_URL + STREAM_URI + AUTHOR_ID)
 }

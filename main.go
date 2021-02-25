@@ -24,7 +24,7 @@ func main() {
 			panic(err)
 		}
 
-		s, error := server.NewServer(envs)
+		s, error := server.NewServer(envs, db)
 
 		if error != nil {
 			return

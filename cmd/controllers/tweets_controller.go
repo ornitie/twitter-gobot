@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/ornitie/twitter-gobot/internal/repositories"
 	"github.com/ornitie/twitter-gobot/internal/services"
 	"github.com/ornitie/twitter-gobot/pkg/resources"
 )
@@ -11,9 +12,9 @@ type (
 	}
 )
 
-func NewTweetsController(baseResource *resources.BaseResource) *TweetsController {
+func NewTweetsController(baseResource *resources.BaseResource, baseRepository *repositories.BaseRepository) *TweetsController {
 	return &TweetsController{
-		service: *services.NewTweetsService(baseResource),
+		service: *services.NewTweetsService(baseResource, baseRepository),
 	}
 }
 

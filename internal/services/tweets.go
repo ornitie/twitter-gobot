@@ -31,15 +31,27 @@ func (service TweetsService) StreamTweets() {
 
 	for {
 		responseTweet := &models.TweetResponse{}
-		err := json.NewDecoder(response.Body).Decode(&responseTweet)
-		if err != nil {
-			log.Fatalf("Error requesting the stream: %v", err)
-		}
-
-		fmt.Printf("YEP %+v", responseTweet.Tweet)
-		err = service.baseRepository.SaveTweet(responseTweet.Tweet)
-		if err != nil {
-			log.Printf("Error saving the tweet %+v, with error %v", responseTweet.Tweet, err)
+		responseError := &models.ResponseError{}
+		if response.Body != nil {
+			reader := bufio.NewReader(response.Body)
+			bytes, _ := reader.ReadBytes('\n')
+			if len(bytes) > 2 {
+				log.Printf("Message received %+v, stringified: %s", bytes, string(bytes))
+				_ = json.Unmarshal(bytes, &responseError)
+				if len(responseError.Errors) > 1 && responseError.Errors[0].Title != "" {
+					service.StreamTweets()
+					return
+				}
+				err := json.Unmarshal(bytes, &responseTweet)
+				if err == nil {
+					err = service.baseRepository.SaveTweet(responseTweet.Tweet)
+					if err != nil {
+						log.Printf("Error saving the tweet %+v, with error %v", responseTweet.Tweet, err)
+					}
+				} else {
+					log.Printf("Error requesting the stream: %v", err)
+				}
+			}
 		}
 	}
 }
